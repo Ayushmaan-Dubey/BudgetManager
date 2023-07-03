@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "773477902181",
+    "project_id": "budget-manager-5be08",
+    "storage_bucket": "budget-manager-5be08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773477902181:android:5559ca15cfe7293cc6638c",
+        "android_client_info": {
+          "package_name": "com.example.budgetmanagerexpensetracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "773477902181-bt8aodglr2mui2qj68c426spffnomc4v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcA8RIur54TKChmB6mSI-PSxYpxCfBTZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "773477902181-bt8aodglr2mui2qj68c426spffnomc4v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

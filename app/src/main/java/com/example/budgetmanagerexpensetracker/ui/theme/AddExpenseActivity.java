@@ -1,5 +1,6 @@
 package com.example.budgetmanagerexpensetracker.ui.theme;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,7 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Calendar;
 import java.util.UUID;
 
-public class AddExpenseActivity extends AppCompatActivity {
+public class AddExpenseActivity extends Activity {
 ActivityAddExpenseBinding binding;
 private String type;
 private ExpenseModel expenseModel;
@@ -39,6 +40,7 @@ private ExpenseModel expenseModel;
             binding.amount.setText(String.valueOf(expenseModel.getAmount()));
             binding.category.setText(expenseModel.getCategory());
             binding.note.setText(expenseModel.getNote());
+            binding.day.setText(expenseModel.getDay());
         }
 
         if(type.equals("Income")){
@@ -51,6 +53,13 @@ private ExpenseModel expenseModel;
             @Override
             public void onClick(View view) {
                 type = "Income";
+            }
+        });
+
+        binding.addExpenseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createExpense();
             }
         });
 
@@ -82,7 +91,7 @@ private ExpenseModel expenseModel;
             if(type != null){
                 createExpense();
             } else {
-                updateExpense();
+                //updateExpense();
             }
             return true;
         }
@@ -104,9 +113,10 @@ private ExpenseModel expenseModel;
 
     private void createExpense(){
         String expenseId = UUID.randomUUID().toString();
-        String amount = binding.amount.getText().toString();
+        long amount = Long.parseLong(binding.amount.getText().toString());
         String note = binding.note.getText().toString();
         String category = binding.category.getText().toString();
+        String day = binding.day.getText().toString();
 
         boolean incomeChecked = binding.incomeRadio.isChecked();
         if(incomeChecked){
@@ -115,12 +125,12 @@ private ExpenseModel expenseModel;
             type = "Expense";
         }
 
-        if(amount.trim().length()==0){
+        if(binding.amount.getText().toString().length()==0){
             binding.amount.setError("Empty");
             return;
         }
-        ExpenseModel expenseModel = new ExpenseModel(expenseId,note,category,type,Long.parseLong(amount),
-                Calendar.getInstance().getTimeInMillis(), FirebaseAuth.getInstance().getUid());
+        ExpenseModel expenseModel = new ExpenseModel(expenseId,note,category,day,amount,
+                Calendar.getInstance().getTimeInMillis(), type, FirebaseAuth.getInstance().getUid());
 
         FirebaseFirestore
                 .getInstance()
@@ -129,7 +139,8 @@ private ExpenseModel expenseModel;
                 .set(expenseModel);
         finish();
     }
-    private void updateExpense(){
+    /*private void updateExpense(){
+
         String expenseId = expenseModel.getExpenseId();
         String amount = binding.amount.getText().toString();
         String note = binding.note.getText().toString();
@@ -156,4 +167,6 @@ private ExpenseModel expenseModel;
                 .set(model);
         finish();
     }
+    */
+
 }

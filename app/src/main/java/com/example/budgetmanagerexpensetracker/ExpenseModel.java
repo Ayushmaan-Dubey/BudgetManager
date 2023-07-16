@@ -6,6 +6,7 @@ public class ExpenseModel implements Serializable {
     private String expenseId;
     private String note;
     private String category;
+    private String day;
     private long amount;
     private long time;
     private String type;
@@ -14,18 +15,17 @@ public class ExpenseModel implements Serializable {
    public ExpenseModel(){
    }
 
-    public ExpenseModel(String expenseId, String note, String category, long amount, long time, String type, String uid) {
+    public ExpenseModel(String expenseId, String note, String category, String day, long amount, long time, String type, String uid) {
         this.expenseId = expenseId;
         this.note = note;
         this.category = category;
+        this.day = day;
         this.amount = amount;
         this.time = time;
         this.type = type;
         this.uid = uid;
     }
 
-    public ExpenseModel(String expenseId, String note, String category, String type, long time, long timeInMillis, String uid) {
-    }
 
     public String getType(){
        return type;
@@ -50,6 +50,10 @@ public class ExpenseModel implements Serializable {
     public void setCategory(String category){
        this.category = category;
     }
+
+    public String getDay(){ return day;}
+
+    public void setDay(String day) { this.day = day;}
 
     public long getAmount(){
        return amount;

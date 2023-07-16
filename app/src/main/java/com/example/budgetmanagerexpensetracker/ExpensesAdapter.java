@@ -45,7 +45,9 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.MyView
         ExpenseModel expenseModel = expenseModelList.get(position);
         holder.note.setText(expenseModel.getNote());
         holder.category.setText(expenseModel.getCategory());
+        holder.date.setText(expenseModel.getDay());
         holder.amount.setText(String.valueOf(expenseModel.getAmount()));
+
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

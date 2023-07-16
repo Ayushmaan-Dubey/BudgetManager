@@ -1,5 +1,6 @@
 package com.example.budgetmanagerexpensetracker;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.budgetmanagerexpensetracker.databinding.ActivityMainBinding;
@@ -27,7 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnItemClick{
+public class MainActivity extends FragmentActivity implements OnItemClick {
     ActivityMainBinding binding;
     private ExpensesAdapter expensesAdapter;
     private long income = 0, expense = 0;
@@ -37,7 +40,13 @@ public class MainActivity extends AppCompatActivity implements OnItemClick{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("L");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.collection, CollectionDemoFragment.class, null)
+                .setReorderingAllowed(true)
+                .addToBackStack("name") // Name can be null
+                .commit();
+/*        System.out.println("L");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClick{
                 intent.putExtra("type", "Expense");
                 startActivity(intent);
             }
-        });
+        });*/
     }
 
     @Override
@@ -111,26 +120,31 @@ public class MainActivity extends AppCompatActivity implements OnItemClick{
         getData();
     }
 
-    private void getData(){
+    private void getData() {
         FirebaseFirestore
                 .getInstance()
                 .collection("expenses")
-                .whereEqualTo("uid", FirebaseAuth.getInstance().getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         expensesAdapter.clear();
-                        List<DocumentSnapshot> dsList= queryDocumentSnapshots.getDocuments();
-                        for(DocumentSnapshot ds:dsList)
-                        {
+                        List<DocumentSnapshot> dsList = queryDocumentSnapshots.getDocuments();
+                        for (DocumentSnapshot ds : dsList) {
                             ExpenseModel expenseModel = ds.toObject(ExpenseModel.class);
-                            if(expenseModel.getType().equals("Income")){
-                                income+=expenseModel.getAmount();
-                            } else{
-                                expense+= expenseModel.getAmount();
+                            if (expenseModel != null && expenseModel.getType() != null) {
+
+                                if (expenseModel.getType().equals("Income")) {
+
+                                    income += expenseModel.getAmount();
+
+                                } else {
+
+                                    expense += expenseModel.getAmount();
+                                }
+                                expensesAdapter.add(expenseModel);
                             }
-                            expensesAdapter.add(expenseModel);
+
                         }
                         setUpGraph();
                     }
@@ -140,15 +154,15 @@ public class MainActivity extends AppCompatActivity implements OnItemClick{
     private void setUpGraph() {
         List<PieEntry> pieEntryList = new ArrayList<>();
         List<Integer> colorList = new ArrayList<>();
-        if(income != 0){
-            pieEntryList.add(new PieEntry(income, "Income"));
+        if (income != 0) {
+            pieEntryList.add(new PieEntry(income, "Deposit"));
             colorList.add(getResources().getColor(R.color.teal_700));
         }
-        if(expense != 0){
-            pieEntryList.add(new PieEntry(expense, "Expense"));
+        if (expense != 0) {
+            pieEntryList.add(new PieEntry(expense, "Withdrawal"));
             colorList.add(getResources().getColor(R.color.orange));
         }
-        PieDataSet pieDataSet = new PieDataSet(pieEntryList, String.valueOf(income-expense));
+        PieDataSet pieDataSet = new PieDataSet(pieEntryList, String.valueOf(income - expense));
         pieDataSet.setColors(colorList);
         pieDataSet.setValueTextColor(getResources().getColor(R.color.white));
         PieData pieData = new PieData(pieDataSet);

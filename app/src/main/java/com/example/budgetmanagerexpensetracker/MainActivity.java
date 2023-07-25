@@ -30,7 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity implements OnItemClick {
+public class MainActivity extends AppCompatActivity implements OnItemClick {
     ActivityMainBinding binding;
     private ExpensesAdapter expensesAdapter;
     private long income = 0, expense = 0;
@@ -40,15 +40,11 @@ public class MainActivity extends FragmentActivity implements OnItemClick {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.collection, CollectionDemoFragment.class, null)
-                .setReorderingAllowed(true)
-                .addToBackStack("name") // Name can be null
-                .commit();
-/*        System.out.println("L");
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        /*
 
         expensesAdapter = new ExpensesAdapter(this, this);
 
@@ -72,6 +68,13 @@ public class MainActivity extends FragmentActivity implements OnItemClick {
                 startActivity(intent);
             }
         });*/
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container_view, CollectionDemoFragment.class, null)
+                .setReorderingAllowed(true)
+                .addToBackStack("name") // Name can be null
+                .commit();
     }
 
     @Override
@@ -98,29 +101,8 @@ public class MainActivity extends FragmentActivity implements OnItemClick {
         }
     }
 
-    private void showProgressDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(LayoutInflater.from(this).inflate(R.layout.custom_progress_dialog, null));
-        builder.setCancelable(false);
-        progressDialog = builder.create();
-        progressDialog.show();
-    }
-
-    private void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        income = 0;
-        expense = 0;
-        getData();
-    }
-
     private void getData() {
+        /*
         FirebaseFirestore
                 .getInstance()
                 .collection("expenses")
@@ -149,7 +131,33 @@ public class MainActivity extends FragmentActivity implements OnItemClick {
                         setUpGraph();
                     }
                 });
+
+         */
     }
+
+    private void showProgressDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(LayoutInflater.from(this).inflate(R.layout.custom_progress_dialog, null));
+        builder.setCancelable(false);
+        progressDialog = builder.create();
+        progressDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        income = 0;
+        expense = 0;
+        getData();
+    }
+
+
 
     private void setUpGraph() {
         List<PieEntry> pieEntryList = new ArrayList<>();
@@ -168,8 +176,8 @@ public class MainActivity extends FragmentActivity implements OnItemClick {
         PieData pieData = new PieData(pieDataSet);
 
 
-        binding.pieChart.setData(pieData);
-        binding.pieChart.invalidate();
+       // binding.pieChart.setData(pieData);
+        //binding.pieChart.invalidate();
     }
 
     @Override

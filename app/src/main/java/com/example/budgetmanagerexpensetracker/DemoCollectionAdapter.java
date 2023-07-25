@@ -14,17 +14,31 @@ public class DemoCollectionAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        // Return a NEW fragment instance in createFragment(int)
-        Fragment fragment = new DemoObjectFragment();
+
+        String tabNameByPosition = CollectionDemoFragment.TAB_NAMES[position];
+        Fragment newFragment = new Fragment();
+        switch(tabNameByPosition) {
+            case "Stats":
+                newFragment = new StatsFragment();
+                break;
+            case "Summary":
+                newFragment = new SummaryFragment();
+            default:
+                break;
+            case "Add Transaction":
+                newFragment = new TransactionFragment();
+                break;
+        }
+
         Bundle args = new Bundle();
         // Our object is just an integer :-P
-        args.putInt(DemoObjectFragment.ARG_OBJECT, position + 1);
-        fragment.setArguments(args);
-        return fragment;
+        args.putInt(StatsFragment.ARG_OBJECT, position + 1);
+        newFragment.setArguments(args);
+        return newFragment;
     }
 
     @Override
     public int getItemCount() {
-        return 100;
+        return 3;
     }
 }

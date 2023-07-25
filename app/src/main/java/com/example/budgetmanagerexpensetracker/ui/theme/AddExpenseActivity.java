@@ -15,6 +15,8 @@ import com.example.budgetmanagerexpensetracker.ExpenseModel;
 import com.example.budgetmanagerexpensetracker.R;
 import com.example.budgetmanagerexpensetracker.databinding.ActivityAddExpenseBinding;
 import com.example.budgetmanagerexpensetracker.databinding.ActivityMainBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -38,7 +40,7 @@ private ExpenseModel expenseModel;
         if(type == null){
             type = expenseModel.getType();
             binding.amount.setText(String.valueOf(expenseModel.getAmount()));
-            binding.category.setText(expenseModel.getCategory());
+            binding.categorySpinner.setSelection(getIndexOfCategory(expenseModel.getCategory()));
             binding.note.setText(expenseModel.getNote());
             binding.day.setText(expenseModel.getDay());
         }
@@ -111,34 +113,60 @@ private ExpenseModel expenseModel;
     }
 
 
-    private void createExpense(){
+    private void createExpense() {
         String expenseId = UUID.randomUUID().toString();
         long amount = Long.parseLong(binding.amount.getText().toString());
         String note = binding.note.getText().toString();
-        String category = binding.category.getText().toString();
+        String category = binding.categorySpinner.getSelectedItem().toString(); // Get the selected category
         String day = binding.day.getText().toString();
 
         boolean incomeChecked = binding.incomeRadio.isChecked();
-        if(incomeChecked){
+        if (incomeChecked) {
             type = "Income";
-        }else {
+        } else {
             type = "Expense";
         }
 
-        if(binding.amount.getText().toString().length()==0){
+        if (binding.amount.getText().toString().length() == 0) {
             binding.amount.setError("Empty");
             return;
         }
-        ExpenseModel expenseModel = new ExpenseModel(expenseId,note,category,day,amount,
+
+        ExpenseModel expenseModel = new ExpenseModel(expenseId, note, category, day, amount,
                 Calendar.getInstance().getTimeInMillis(), type, FirebaseAuth.getInstance().getUid());
 
         FirebaseFirestore
                 .getInstance()
                 .collection("expenses")
                 .document(expenseId)
-                .set(expenseModel);
-        finish();
+                .set(expenseModel)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // Show a success message or handle the success as required
+                        Toast.makeText(AddExpenseActivity.this, "Expense added!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the failure if necessary
+                        Toast.makeText(AddExpenseActivity.this, "Failed to add expense.", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
+    private int getIndexOfCategory(String category) {
+        String[] categories = getResources().getStringArray(R.array.categories);
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i].equals(category)) {
+                return i;
+            }
+        }
+        return 0; // Default to the first category if the category is not found
+    }
+
     /*private void updateExpense(){
 
         String expenseId = expenseModel.getExpenseId();

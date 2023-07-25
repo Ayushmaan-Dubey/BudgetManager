@@ -19,6 +19,18 @@ public class CollectionDemoFragment extends Fragment {
     DemoCollectionAdapter demoCollectionAdapter;
     ViewPager2 viewPager;
 
+    public static final String [] TAB_NAMES = new String[] {
+            "Summary" ,
+            "Stats",
+            "Add Transaction"
+    };
+
+    public static final int[] TAB_ICONS = new int[]{
+            R.drawable.baseline_credit_card_24,
+            R.drawable.baseline_auto_graph_24,
+            R.drawable.baseline_add_box_24
+    };
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -28,13 +40,15 @@ public class CollectionDemoFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
-        new TabLayoutMediator(tabLayout, viewPager,
-                (tab, position) -> tab.setText("OBJECT " + (position + 1))
-        ).attach();
         demoCollectionAdapter = new DemoCollectionAdapter(this);
         viewPager = view.findViewById(R.id.pager);
         viewPager.setAdapter(demoCollectionAdapter);
+        TabLayout tabLayout = view.findViewById(R.id.tab_layout);
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> {
+                    tab.setText(TAB_NAMES[position]);
+                    tab.setIcon(TAB_ICONS[position]);
+                }
+        ).attach();
     }
-
 }
